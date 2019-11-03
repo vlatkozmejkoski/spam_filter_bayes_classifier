@@ -184,7 +184,7 @@ class MultinomialNBSpamFilter:
 
 
 def main():
-    sf = MultinomailNBSpamFilter("../data/SMSSpamTrain.txt")
+    sf = MultinomialNBSpamFilter("../data/SMSSpamTrain.txt")
     sf.build_model()
     test_data = read_data("../data/SMSSpamTest.txt")
     formatted_data = format_sentences(test_data)
