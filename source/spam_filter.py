@@ -25,6 +25,7 @@ def format_sentences(data_set):
 def confusion_matrix(actual, predicted):
     """
     Confusion matrix for computing TruePositives, TrueNegatives, FalsePositives, FalseNegatives
+    Where positive = ham, negative = spam
     :param actual:
     :param predicted:
     :return string of TP,TN,FP,FN:
@@ -42,7 +43,7 @@ def confusion_matrix(actual, predicted):
     print("TP: %d\t TN: %d\t FP: %d\t FN: %d" % (TP, TN, FP, FN))
 
 
-class MultinomailNBSpamFilter:
+class MultinomialNBSpamFilter:
     """
     Class representing the multinomial naive bayes classifier, consists of all the methods and class variables for
     training the model and predicting target values of vectors
@@ -121,15 +122,12 @@ class MultinomailNBSpamFilter:
         :return vocab_freq:
         """
         data = read_data(self.training_set_file)
-        print(data)
         formatted_data = self.text_pre_processing(format_sentences(data))
         targets = [tar[0] for tar in formatted_data]
         self.total_spam = len([t for t in targets if t == 'spam'])
         self.total_ham = len([t for t in targets if t == 'ham'])
         self.p_of_ham = math.log(self.total_ham / len(formatted_data))
         self.p_of_spam = math.log(self.total_spam / len(formatted_data))
-        print(self.p_of_ham)
-        print(self.p_of_spam)
         refined_set = self.term_frequency(formatted_data)
         self.vocab_freq['spam'] = {}
         self.vocab_freq['ham'] = {}
@@ -187,7 +185,7 @@ class MultinomailNBSpamFilter:
 
 def main():
     sf = MultinomailNBSpamFilter("../data/SMSSpamTrain.txt")
-    print(sf.build_model())
+    sf.build_model()
     test_data = read_data("../data/SMSSpamTest.txt")
     formatted_data = format_sentences(test_data)
     predictions = sf.classify(formatted_data)
