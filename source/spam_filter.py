@@ -2,11 +2,19 @@ import math
 
 
 def read_data(file_path):
+    """Reads the data set file line by line
+    :param file_path
+    :returns list of strings (lines)"""
     file = open(file_path, "r").readlines()
     return file
 
 
 def format_sentences(data_set):
+    """
+    Formats the list of lines such that we separate the target values from the features (attributes)
+    :param data_set:
+    :returns list of tuples, each tuple is a vector in the data set (target, attribute):
+    """
     result = []
     for i, sentence in enumerate(data_set):
         vector = sentence.split('\t')
@@ -15,6 +23,12 @@ def format_sentences(data_set):
 
 
 def confusion_matrix(actual, predicted):
+    """
+    Confusion matrix for computing TruePositives, TrueNegatives, FalsePositives, FalseNegatives
+    :param actual:
+    :param predicted:
+    :return string of TP,TN,FP,FN:
+    """
     TP, TN, FP, FN = 0, 0, 0, 0
     for i in range(0, len(actual)):
         if actual[i][0] == 'spam' and predicted[i] == 'spam':
@@ -29,6 +43,10 @@ def confusion_matrix(actual, predicted):
 
 
 class MultinomailNBSpamFilter:
+    """
+    Class representing the multinomial naive bayes classifier, consists of all the methods and class variables for
+    training the model and predicting target values of vectors
+    """
     _punctuations = [',', '.', '!', '?']
 
     def __init__(self, training_set_file):
@@ -41,9 +59,10 @@ class MultinomailNBSpamFilter:
 
     def word_tokenize(self, document):
         """
-        Tokenize each text, such that we get each relevant word of the sentence
+        Tokenize each text, such that we get each word of the sentence
+        While iterating each word, it removes all punctuations at the and of the word
         :param document:
-        :return:
+        :return tuple of the target value and the list of words of the sentence (text):
         """
         result = []
         words = document[1].split()
@@ -59,9 +78,10 @@ class MultinomailNBSpamFilter:
 
     def text_pre_processing(self, data):
         """
-        Text pre-processing of the dataset
+        Text pre-processing of the data set
+        Calls word_tokenize for each record in the data set
         :param data:
-        :return refined_set:
+        :return refined list of records:
         """
         refined_set = []
         for doc in data:
@@ -73,7 +93,7 @@ class MultinomailNBSpamFilter:
         """
         This method calculates the frequency of words in a document (sms text)
         :param vectors:
-        :return refined_set:
+        :return: List of tuples with the target value and a dictionary of each word with the frequency
         """
         refined_set = []
         for (target, list_of_words) in vectors:
@@ -101,6 +121,7 @@ class MultinomailNBSpamFilter:
         :return vocab_freq:
         """
         data = read_data(self.training_set_file)
+        print(data)
         formatted_data = self.text_pre_processing(format_sentences(data))
         targets = [tar[0] for tar in formatted_data]
         self.total_spam = len([t for t in targets if t == 'spam'])
